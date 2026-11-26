@@ -131,7 +131,15 @@ export function PriceProvider({ children }) {
 }
 
 // ─── ROW MAPPERS ──────────────────────────────────────────────────────────────
-const mapUser    = u => ({ ...u, holdings:u.holdings||[], staking:u.staking||[] });
+// Supabase may return jsonb/text columns as arrays OR as JSON strings
+const parseArr = v => {
+  if (Array.isArray(v)) return v;
+  if (typeof v === "string") {
+    try { const p = JSON.parse(v); return Array.isArray(p) ? p : []; } catch { return []; }
+  }
+  return [];
+};
+const mapUser    = u => ({ ...u, holdings: parseArr(u.holdings), staking: parseArr(u.staking) });
 const mapPending = t => ({ ...t, user: t.user_email || t.user });
 const mapFee     = r => ({ ...r, user: r.user_email || r.user });
 const mapWallet  = w => ({ coin:w.coin, address:w.address, network:w.network, walletName:w.wallet_name, fee:w.fee, assignedAt:w.assigned_at });
@@ -242,7 +250,8 @@ export function AppProvider({ children }) {
       id:u.id, name:u.name, email:u.email,
       password:u.password,
       balance:u.balance, portfolio:u.portfolio,
-      holdings:u.holdings||[], staking:u.staking||[],
+      holdings:JSON.stringify(parseArr(u.holdings)),
+      staking:JSON.stringify(parseArr(u.staking)),
       joined:u.joined, verified:u.verified, status:u.status, tier:u.tier,
     });
     if (error) { console.error("upsertUserRow error:", error); throw error; }
@@ -266,8 +275,8 @@ export function AppProvider({ children }) {
         password:  hashedUser.password,
         balance:   hashedUser.balance,
         portfolio: hashedUser.portfolio,
-        holdings:  JSON.stringify(hashedUser.holdings || []),
-        staking:   JSON.stringify(hashedUser.staking  || []),
+        holdings:  JSON.stringify(parseArr(hashedUser.holdings)),
+        staking:   JSON.stringify(parseArr(hashedUser.staking)),
         joined:    hashedUser.joined,
         verified:  hashedUser.verified,
         status:    hashedUser.status,
