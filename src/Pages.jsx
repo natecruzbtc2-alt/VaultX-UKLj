@@ -1,13 +1,16 @@
 import { useApp } from "./AppContext";
 import { C, S, btn, globalCSS } from "./theme";
 
+// Resolves against the deploy base path (e.g. "/repo-name/" on GitHub Pages)
+const LOGO_SRC = `${import.meta.env.BASE_URL}logo.png`;
+
 // ─── SHARED NAV ───────────────────────────────────────────────────────────────
 function PageNav() {
   const { setView } = useApp();
   return (
     <nav style={S.nav}>
       <div style={{ display:"flex", alignItems:"center", gap:10, cursor:"pointer" }} onClick={() => setView("landing")}>
-        <img src="/logo.png" style={{ width:36, height:36, borderRadius:10, objectFit:"cover" }} alt="VaultX" onError={e=>{e.target.style.display="none";}}/>
+        <img src={LOGO_SRC} style={{ width:36, height:36, borderRadius:10, objectFit:"cover" }} alt="VaultX" onError={e=>{e.target.style.display="none";}}/>
         <span style={{ fontSize:17, fontWeight:800, textTransform:"uppercase", letterSpacing:"-.5px", color:C.text }}>VaultXcrypto</span>
       </div>
       <div style={{ display:"flex", gap:12 }}>
@@ -46,7 +49,7 @@ export function Footer() {
           {/* Brand */}
           <div>
             <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:16 }}>
-              <img src="/logo.png" style={{ width:36, height:36, borderRadius:10, objectFit:"cover" }} alt="VaultX" onError={e=>{e.target.style.display="none";}}/>
+              <img src={LOGO_SRC} style={{ width:36, height:36, borderRadius:10, objectFit:"cover" }} alt="VaultX" onError={e=>{e.target.style.display="none";}}/>
               <span style={{ fontSize:17, fontWeight:800, color:C.text, textTransform:"uppercase", letterSpacing:"-.5px" }}>VaultXcrypto</span>
             </div>
             <p style={{ fontSize:13, color:C.text3, lineHeight:1.8, maxWidth:280 }}>
